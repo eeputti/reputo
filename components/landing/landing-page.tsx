@@ -190,9 +190,9 @@ function GlobalStyles() {
       .field .msg { font-size: 0.8rem; color: oklch(0.55 0.18 25); font-weight: 500; }
       @media (max-width: 920px) {
         .hero-grid { grid-template-columns: 1fr; gap: 44px; }
-        .hero-visual { justify-content: center; align-items: flex-start; flex-wrap: nowrap; min-height: 430px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .hero-visual { justify-content: flex-start; align-items: flex-start; flex-wrap: nowrap; min-height: 430px; width: 100%; max-width: 500px; margin: 0; }
         .phone-shell { width: min(268px, 58vw) !important; }
-        .hero-visual .dash-wrap { position: absolute; right: 0; bottom: 10px; width: min(320px, 66vw); margin-left: 0; }
+        .hero-visual .dash-wrap { position: absolute; right: 0; top: 92px; bottom: auto; width: min(320px, 66vw); margin-left: 0; }
         .nav-links { display: none; }
         .nav-actions { width: 100%; justify-content: stretch; }
         .nav-actions > * { flex: 1; }
@@ -203,7 +203,7 @@ function GlobalStyles() {
       @media (max-width: 560px) {
         .hero-visual { min-height: 360px; max-width: 100%; }
         .phone-shell { width: min(228px, 62vw) !important; }
-        .hero-visual .dash-wrap { width: min(248px, 72vw); right: -2px; bottom: 2px; }
+        .hero-visual .dash-wrap { width: min(248px, 72vw); right: 0; top: 108px; }
         .btn-row { flex-direction: column; align-items: stretch; }
       }
     `}</style>
