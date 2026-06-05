@@ -1132,7 +1132,7 @@ function ComplianceSection() {
 function PricingSection() {
   const plans = [
     {
-      name: "Starter",
+      name: "Aloittelija",
       price: "49",
       tag: "Pienelle yritykselle",
       feats: ["100 SMS-pyyntöä / kk", "1 toimipiste", "Quick add -linkki", "Klikkiseuranta", "1 muistutusviesti"],
@@ -1140,7 +1140,7 @@ function PricingSection() {
       featured: false,
     },
     {
-      name: "Growth",
+      name: "Kasvu",
       price: "99",
       tag: "Kasvavalle palveluyritykselle",
       feats: ["300 SMS-pyyntöä / kk", "Useampi käyttäjä", "Kuukausiraportti", "AI-vastauspohjat", "Prioriteettituki"],
