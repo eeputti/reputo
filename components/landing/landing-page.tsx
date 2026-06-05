@@ -608,26 +608,30 @@ function PhoneMockup() {
             }}
           >
             Hei! Kiitos käynnistä Autokorjaamo Esimerkissä. Arvostelusi auttaa meitä paljon. Voit jättää
-            rehellisen Google-arvostelun tästä:
+            rehellisen Google-arvostelun tästä.
             <a
               href="#"
               onClick={(event) => event.preventDefault()}
               style={{
-                display: "inline-flex",
+                display: "flex",
                 alignItems: "center",
-                gap: 6,
-                marginTop: 9,
-                padding: "7px 11px",
-                background: "#fff",
-                border: "1px solid var(--line-strong)",
-                borderRadius: 10,
+                gap: 12,
+                marginTop: 12,
+                padding: "14px 18px",
+                background: "#101012",
+                borderRadius: 20,
                 fontSize: 12.5,
-                fontWeight: 600,
-                color: "var(--ink)",
+                fontWeight: 700,
+                color: "#fff",
+                textDecoration: "none",
               }}
             >
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)" }} />
-              g.page/autokorjaamo-esimerkki
+              <span style={{ color: "var(--green)", fontSize: 21, lineHeight: 1 }}>★</span>
+              <span style={{ fontSize: 13.5, lineHeight: 1.28 }}>
+                Jätä Google-
+                <br />
+                arvostelu
+              </span>
             </a>
             <div style={{ marginTop: 10, fontSize: 11.5, color: "var(--ink-soft)" }}>Vastaa STOP, jos et halua viestejä.</div>
           </div>
