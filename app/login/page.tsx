@@ -24,8 +24,8 @@ export default async function LoginPage({
   return (
     <AuthShell
       eyebrow="Kirjaudu sisään"
-      title="Tervetuloa takaisin Reputoon"
-      description="Seuraa arvostelupyyntöjäsi ja pidä asiakaspalautteen kasvu hallinnassa yhdestä paikasta."
+      title="Tervetuloa Reputoon"
+      description="Seuraa arvostelujasi yhdestä näkymästä."
     >
       <LoginForm message={searchParams?.message} />
     </AuthShell>

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { type User } from "@supabase/supabase-js";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import {
@@ -30,6 +31,47 @@ type ReviewRequestRecord = {
   clicked_at: string | null;
   review_left_at: string | null;
 };
+
+async function bootstrapProfileForUser(user: User) {
+  const supabase = createServerSupabaseClient();
+  const businessName =
+    typeof user.user_metadata?.business_name === "string" && user.user_metadata.business_name.trim().length > 0
+      ? user.user_metadata.business_name.trim()
+      : "Reputo";
+
+  const { data: businessData, error: businessError } = await supabase
+    .from("businesses")
+    .insert({
+      name: businessName,
+    })
+    .select("id, name, google_review_url")
+    .single();
+
+  if (businessError) {
+    throw businessError;
+  }
+
+  const nextProfile = {
+    id: user.id,
+    business_id: (businessData as BusinessRecord).id,
+    full_name: typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null,
+    role: "owner",
+  };
+
+  const { error: profileError } = await supabase.from("profiles").upsert(nextProfile);
+
+  if (profileError) {
+    throw profileError;
+  }
+
+  return {
+    profile: {
+      business_id: nextProfile.business_id,
+      full_name: nextProfile.full_name,
+    } satisfies ProfileRecord,
+    business: businessData as BusinessRecord,
+  };
+}
 
 function getStats(rows: DashboardRow[]) {
   if (!rows.length) {
@@ -83,6 +125,12 @@ export default async function DashboardPage() {
     }
 
     profile = (profileData as ProfileRecord | null) ?? null;
+
+    if (!profile?.business_id) {
+      const bootstrapped = await bootstrapProfileForUser(user);
+      profile = bootstrapped.profile;
+      business = bootstrapped.business;
+    }
   } catch (error) {
     console.error("Failed to load profile data", error);
   }

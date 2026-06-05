@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { missingSupabaseConfigMessage } from "@/lib/supabase/config";
+import { getAuthErrorMessage } from "@/lib/supabase/errors";
 
 export function LoginForm({ message }: { message?: string }) {
   const router = useRouter();
@@ -43,7 +44,8 @@ export function LoginForm({ message }: { message?: string }) {
       router.refresh();
     } catch (submitError) {
       const nextError =
-        submitError instanceof Error ? submitError.message : "Kirjautuminen epäonnistui. Yritä uudelleen.";
+        getAuthErrorMessage(submitError) ??
+        (submitError instanceof Error ? submitError.message : "Kirjautuminen epäonnistui. Yritä uudelleen.");
       setError(nextError);
     } finally {
       setIsPending(false);

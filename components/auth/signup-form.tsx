@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import { missingSupabaseConfigMessage } from "@/lib/supabase/config";
-import { isMissingRelationError } from "@/lib/supabase/errors";
+import { getAuthErrorMessage, isMissingRelationError } from "@/lib/supabase/errors";
 
 export function SignupForm({ message }: { message?: string }) {
   const router = useRouter();
@@ -83,7 +83,7 @@ export function SignupForm({ message }: { message?: string }) {
         throw signUpError;
       }
 
-      if (data.user) {
+      if (data.session && data.user) {
         await bootstrapProfile(data.user.id, businessName);
       }
 
@@ -98,7 +98,8 @@ export function SignupForm({ message }: { message?: string }) {
       router.refresh();
     } catch (submitError) {
       const nextError =
-        submitError instanceof Error ? submitError.message : "Tilin luonti epäonnistui. Yritä uudelleen.";
+        getAuthErrorMessage(submitError) ??
+        (submitError instanceof Error ? submitError.message : "Tilin luonti epäonnistui. Yritä uudelleen.");
       setError(nextError);
     } finally {
       setIsPending(false);

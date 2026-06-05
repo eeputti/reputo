@@ -32,6 +32,14 @@ create index if not exists profiles_business_id_idx on public.profiles (business
 create index if not exists review_requests_business_id_idx on public.review_requests (business_id);
 create index if not exists review_requests_created_at_idx on public.review_requests (created_at desc);
 
+grant usage on schema public to authenticated;
+grant all on table public.businesses to service_role;
+grant all on table public.profiles to service_role;
+grant all on table public.review_requests to service_role;
+grant select, insert, update on table public.businesses to authenticated;
+grant select, insert, update on table public.profiles to authenticated;
+grant select, insert, update on table public.review_requests to authenticated;
+
 alter table public.businesses enable row level security;
 alter table public.profiles enable row level security;
 alter table public.review_requests enable row level security;

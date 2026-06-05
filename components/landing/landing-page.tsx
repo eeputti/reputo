@@ -191,7 +191,7 @@ function GlobalStyles() {
       @media (max-width: 920px) {
         .hero-grid { grid-template-columns: 1fr; gap: 44px; }
         .hero-visual { justify-content: flex-start; align-items: flex-start; flex-wrap: nowrap; min-height: 430px; width: 100%; max-width: 500px; margin: 0; }
-        .phone-shell { width: min(268px, 58vw) !important; }
+        .phone-shell { width: 268px !important; min-width: 268px; }
         .hero-visual .dash-wrap { position: absolute; right: 0; top: 92px; bottom: auto; width: min(320px, 66vw); margin-left: 0; }
         .nav-links { display: none; }
         .nav-actions { width: 100%; justify-content: stretch; }
@@ -202,7 +202,7 @@ function GlobalStyles() {
       }
       @media (max-width: 560px) {
         .hero-visual { min-height: 360px; max-width: 100%; }
-        .phone-shell { width: min(228px, 62vw) !important; }
+        .phone-shell { width: 268px !important; min-width: 268px; }
         .hero-visual .dash-wrap { width: min(248px, 72vw); right: 0; top: 108px; }
         .btn-row { flex-direction: column; align-items: stretch; }
       }
@@ -1160,12 +1160,15 @@ function PricingSection() {
         <div className="section-head" style={{ marginBottom: 50, maxWidth: 640 }}>
           <Reveal as="h2" className="h2">Selkeä hinta. Ei sitoutumista.</Reveal>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, maxWidth: 880 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, maxWidth: 880, margin: "0 auto", justifyContent: "center" }}>
           {plans.map((plan, index) => (
             <Reveal
               key={plan.name}
               delay={index * 100}
               style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
                 borderRadius: "var(--r-xl)",
                 padding: "32px 30px 34px",
                 background: plan.featured ? "var(--accent)" : "var(--surface)",
@@ -1191,7 +1194,7 @@ function PricingSection() {
                 </span>
                 <span style={{ opacity: 0.6, fontWeight: 600 }}>/ kk</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, flex: 1 }}>
                 {plan.feats.map((feature) => (
                   <div key={feature} style={{ display: "flex", alignItems: "center", gap: 11, fontSize: "1rem" }}>
                     <span
@@ -1214,13 +1217,17 @@ function PricingSection() {
                   </div>
                 ))}
               </div>
-              <a href="#demo" className={`btn btn-block ${plan.featured ? "" : "btn-primary"}`} style={plan.featured ? { background: "#fff", color: "var(--ink)" } : undefined}>
+              <a
+                href="#demo"
+                className={`btn btn-block ${plan.featured ? "" : "btn-primary"}`}
+                style={plan.featured ? { background: "#fff", color: "var(--ink)", minHeight: 84, marginTop: "auto" } : { minHeight: 84, marginTop: "auto" }}
+              >
                 {plan.cta}
               </a>
             </Reveal>
           ))}
         </div>
-        <Reveal as="p" delay={120} style={{ marginTop: 24, fontSize: "0.95rem", color: "var(--ink-faint)", fontWeight: 500 }}>
+        <Reveal as="p" delay={120} style={{ marginTop: 24, fontSize: "0.95rem", color: "var(--ink-faint)", fontWeight: 500, textAlign: "center" }}>
           Ensimmäisille asiakkaille ensimmäinen kuukausi 29 €. Ei sitoutumista.
         </Reveal>
       </div>
