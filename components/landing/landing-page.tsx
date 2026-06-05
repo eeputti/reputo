@@ -181,6 +181,7 @@ function GlobalStyles() {
       .hero-grid { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 48px; align-items: center; }
       .hero-visual { display: flex; align-items: center; justify-content: center; position: relative; }
       .hero-visual .dash-wrap { margin-left: -70px; z-index: 3; width: 338px; flex: none; }
+      .phone-shell { position: relative; z-index: 2; }
       .field { display: flex; flex-direction: column; gap: 7px; }
       .field label { font-size: 0.86rem; font-weight: 600; color: var(--ink-soft); }
       .field input, .field textarea { font-family: inherit; font-size: 1rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; padding: 13px 15px; transition: border-color .15s, box-shadow .15s; width: 100%; }
@@ -189,8 +190,9 @@ function GlobalStyles() {
       .field .msg { font-size: 0.8rem; color: oklch(0.55 0.18 25); font-weight: 500; }
       @media (max-width: 920px) {
         .hero-grid { grid-template-columns: 1fr; gap: 44px; }
-        .hero-visual { justify-content: flex-start; flex-wrap: wrap; gap: 22px; }
-        .hero-visual .dash-wrap { margin-left: 0; }
+        .hero-visual { justify-content: center; align-items: flex-start; flex-wrap: nowrap; min-height: 430px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .phone-shell { width: min(268px, 58vw) !important; }
+        .hero-visual .dash-wrap { position: absolute; right: 0; bottom: 10px; width: min(320px, 66vw); margin-left: 0; }
         .nav-links { display: none; }
         .nav-actions { width: 100%; justify-content: stretch; }
         .nav-actions > * { flex: 1; }
@@ -199,7 +201,9 @@ function GlobalStyles() {
         .form-grid { grid-template-columns: 1fr !important; }
       }
       @media (max-width: 560px) {
-        .hero-visual { transform: scale(0.92); transform-origin: left top; }
+        .hero-visual { min-height: 360px; max-width: 100%; }
+        .phone-shell { width: min(228px, 62vw) !important; }
+        .hero-visual .dash-wrap { width: min(248px, 72vw); right: -2px; bottom: 2px; }
         .btn-row { flex-direction: column; align-items: stretch; }
       }
     `}</style>
@@ -486,6 +490,7 @@ function PhoneMockup() {
   return (
     <div
       ref={ref}
+      className="phone-shell"
       style={{
         width: 268,
         background: "#0e0e0f",
