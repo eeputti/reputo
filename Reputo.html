@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reputo — Google-arvostelut automaattisesti tekstiviestillä</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #fafafa;
+    --ink: #0e0e0f;
+    --ink-soft: #5a5a60;
+    --ink-faint: #8a8a90;
+    --line: #e7e7e2;
+    --line-strong: #d9d9d3;
+
+    /* tweakable accent (default black) */
+    --accent: #0e0e0f;
+    --accent-hover: #2a2a2c;
+    --accent-ink: #ffffff;
+
+    /* status green — success/status states ONLY */
+    --green: oklch(0.60 0.13 156);
+    --green-deep: oklch(0.50 0.12 156);
+    --green-tint: oklch(0.95 0.04 156);
+    --amber: oklch(0.74 0.13 75);
+    --amber-tint: oklch(0.95 0.05 75);
+
+    /* gradient/glass intensity, tweakable 0..1 */
+    --grad: 0.55;
+
+    --r-sm: 10px;
+    --r-md: 16px;
+    --r-lg: 24px;
+    --r-xl: 34px;
+    --r-pill: 999px;
+
+    --shadow-sm: 0 1px 2px rgba(14,14,15,0.04), 0 2px 6px rgba(14,14,15,0.03);
+    --shadow-md: 0 4px 14px rgba(14,14,15,0.05), 0 14px 40px rgba(14,14,15,0.06);
+    --shadow-lg: 0 18px 40px rgba(14,14,15,0.10), 0 40px 100px rgba(14,14,15,0.14);
+
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 { margin: 0; font-weight: 700; line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  ::selection { background: var(--ink); color: #fff; }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+  /* ---- type scale ---- */
+  .display { font-size: clamp(2.9rem, 6.9vw, 5.4rem); font-weight: 800; letter-spacing: -0.042em; }
+  .h2 { font-size: clamp(2.15rem, 4.6vw, 3.55rem); font-weight: 800; letter-spacing: -0.038em; }
+  .h3 { font-size: clamp(1.35rem, 2.2vw, 1.7rem); letter-spacing: -0.025em; }
+  .lede { font-size: clamp(1.08rem, 1.5vw, 1.3rem); color: var(--ink-soft); line-height: 1.5; font-weight: 400; letter-spacing: -0.01em; }
+  .eyebrow {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .mono { font-family: var(--mono); font-feature-settings: "tnum" 1; letter-spacing: -0.02em; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* ---- buttons ---- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    border: 1px solid transparent; border-radius: var(--r-pill);
+    font-size: 1rem; font-weight: 600; letter-spacing: -0.01em;
+    padding: 14px 24px; transition: transform .18s cubic-bezier(.2,.8,.2,1), background .18s, box-shadow .18s, border-color .18s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.14); }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.14); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+  .btn-ghost:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .btn-lg { padding: 17px 30px; font-size: 1.06rem; }
+  .btn-block { width: 100%; }
+
+  /* ---- section rhythm ---- */
+  section { position: relative; }
+  .sec { padding: clamp(70px, 9vw, 130px) 0; }
+  .sec-tight { padding: clamp(54px, 6vw, 86px) 0; }
+  .sec-head { max-width: 720px; }
+  .sec-head .h2 { margin-bottom: 18px; }
+
+  /* ---- cards ---- */
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px;
+    border-radius: var(--r-pill); border: 1px solid var(--line-strong); background: var(--surface);
+    font-size: 0.9rem; font-weight: 500; color: var(--ink); white-space: nowrap;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex: none; }
+
+  /* ---- gradient washes (intensity driven by --grad) ---- */
+  .wash { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .wash::before {
+    content: ""; position: absolute; width: 78vw; height: 78vw; max-width: 1000px; max-height: 1000px;
+    top: -34%; left: 50%; transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(14,14,15,calc(0.06 * var(--grad))), transparent 70%);
+  }
+  .wash::after {
+    content: ""; position: absolute; width: 50vw; height: 50vw; max-width: 620px; max-height: 620px;
+    top: 6%; right: -8%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--green) 32%, transparent) calc(0.16 * var(--grad)), transparent 70%);
+    opacity: calc(0.5 * var(--grad));
+  }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---- dark section (premium contrast band) ---- */
+  .sec.dark { background: #0a0a0b; color: #fff; }
+  .sec.dark .h2, .sec.dark .h3 { color: #fff; }
+  .sec.dark .lede { color: rgba(255,255,255,0.62); }
+  .sec.dark .wash::before { background: radial-gradient(closest-side, rgba(255,255,255,calc(0.07 * var(--grad))), transparent 70%); }
+  .sec.dark .wash::after { background: radial-gradient(closest-side, color-mix(in oklab, var(--green) 60%, transparent) calc(0.22 * var(--grad)), transparent 70%); opacity: calc(0.6 * var(--grad)); }
+  .sec.dark .card { color: var(--ink); box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 2px 0 rgba(255,255,255,0.04); }
+
+  /* ---- ambient float on hero visual ---- */
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+  /* ---- drifting trust pills ---- */
+  @keyframes floatP1 { 0%,100% { transform: translate(0,0); } 30% { transform: translate(3px,-9px); } 65% { transform: translate(-2px,5px); } }
+  @keyframes floatP2 { 0%,100% { transform: translate(0,0); } 35% { transform: translate(-4px,6px); } 70% { transform: translate(2px,-8px); } }
+  @keyframes floatP3 { 0%,100% { transform: translate(0,0); } 40% { transform: translate(4px,-6px); } 75% { transform: translate(-3px,7px); } }
+  @keyframes floatP4 { 0%,100% { transform: translate(0,0); } 30% { transform: translate(-3px,-7px); } 60% { transform: translate(3px,6px); } }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-visual .dash-wrap { animation: floaty 7s ease-in-out infinite; }
+    .float-pill { animation-timing-function: ease-in-out; animation-iteration-count: infinite; will-change: transform; }
+    .float-pill.fp1 { animation-name: floatP1; animation-duration: 6.2s; animation-delay: -0.4s; }
+    .float-pill.fp2 { animation-name: floatP2; animation-duration: 7.1s; animation-delay: -1.9s; }
+    .float-pill.fp3 { animation-name: floatP3; animation-duration: 6.6s; animation-delay: -3.1s; }
+    .float-pill.fp4 { animation-name: floatP4; animation-duration: 7.7s; animation-delay: -0.9s; }
+  }
+
+  /* ---- 3D floating stars (decorative) ---- */
+  .starfield { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .star3d {
+    position: absolute; width: var(--s, 64px); height: var(--s, 64px);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background:
+      linear-gradient(135deg,
+        var(--c1, color-mix(in oklab, var(--green) 78%, white)) 0%,
+        var(--c2, var(--green)) 46%,
+        var(--c3, var(--green-deep)) 100%);
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.5);
+    filter: drop-shadow(0 12px 18px var(--cs, rgba(14,14,15,0.20)));
+    opacity: var(--o, 0.82);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .star3d.neutral {
+    background: linear-gradient(135deg, #ffffff 0%, #e9e9e4 48%, #cfcfc7 100%);
+    filter: drop-shadow(0 12px 18px rgba(14,14,15,0.14));
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.7);
+    opacity: var(--o, 0.55);
+  }
+  @keyframes spin3dA { 0%,100% { transform: perspective(1100px) rotateX(9deg) rotateY(-14deg) rotateZ(-5deg) translateY(0); } 50% { transform: perspective(1100px) rotateX(9deg) rotateY(14deg) rotateZ(-5deg) translateY(-13px); } }
+  @keyframes spin3dB { 0%,100% { transform: perspective(1100px) rotateX(-8deg) rotateY(13deg) rotateZ(6deg) translateY(0); } 50% { transform: perspective(1100px) rotateX(-8deg) rotateY(-13deg) rotateZ(6deg) translateY(12px); } }
+  @keyframes bob { 0%,100% { transform: perspective(1100px) rotateX(11deg) rotateZ(-6deg) translateY(0) scale(1); } 50% { transform: perspective(1100px) rotateX(11deg) rotateZ(-6deg) translateY(-11px) scale(1.03); } }
+  @media (prefers-reduced-motion: no-preference) {
+    .star3d.spinA { animation: spin3dA var(--d, 16s) ease-in-out infinite; }
+    .star3d.spinB { animation: spin3dB var(--d, 19s) ease-in-out infinite; }
+    .star3d.bob { animation: bob var(--d, 7s) ease-in-out infinite; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .star3d { transform: perspective(1100px) rotateX(9deg) rotateZ(-5deg); }
+  }
+
+  /* glassy 3D tiles + message bubbles (decorative) */
+  .tile3d {
+    position: absolute; width: var(--s, 76px); height: var(--s, 76px); border-radius: 23%;
+    background: linear-gradient(150deg, var(--c1, #ffffff) 0%, var(--c2, #eef0ec) 58%, var(--c3, #dadcd6) 100%);
+    box-shadow: 0 18px 32px var(--cs, rgba(14,14,15,0.13)), inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -4px 7px rgba(14,14,15,0.06);
+    display: grid; place-items: center; opacity: var(--o, 0.7);
+    transform-style: preserve-3d; will-change: transform;
+  }
+  .tile3d span { font-size: calc(var(--s, 76px) * 0.44); font-weight: 800; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+  .tile3d.green span { color: var(--green-deep); }
+  .tile3d.solid span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.18); }
+  .bubble3d {
+    position: absolute; width: var(--s, 80px); height: calc(var(--s, 80px) * 0.72); border-radius: 22% 22% 22% 8%;
+    background: linear-gradient(150deg, var(--c1, color-mix(in oklab, var(--green) 70%, white)) 0%, var(--c2, var(--green)) 55%, var(--c3, var(--green-deep)) 100%);
+    box-shadow: 0 18px 30px var(--cs, color-mix(in oklab, var(--green-deep) 30%, transparent)), inset 0 2px 3px rgba(255,255,255,0.5);
+    display: grid; place-items: center; opacity: var(--o, 0.62);
+    transform-style: preserve-3d; will-change: transform;
+  }
+  .bubble3d span { display: flex; gap: calc(var(--s,80px)*0.07); }
+  .bubble3d i { width: calc(var(--s,80px)*0.1); height: calc(var(--s,80px)*0.1); border-radius: 50%; background: #fff; opacity: 0.92; }
+  @keyframes float3dA { 0%,100% { transform: perspective(1100px) rotateX(8deg) rotateY(-9deg) rotateZ(-4deg) translateY(0); } 50% { transform: perspective(1100px) rotateX(8deg) rotateY(-9deg) rotateZ(-4deg) translateY(-15px); } }
+  @keyframes float3dB { 0%,100% { transform: perspective(1100px) rotateX(-7deg) rotateY(10deg) rotateZ(5deg) translateY(0); } 50% { transform: perspective(1100px) rotateX(-7deg) rotateY(10deg) rotateZ(5deg) translateY(13px); } }
+  @media (prefers-reduced-motion: no-preference) {
+    .tile3d.tA, .bubble3d.tA { animation: float3dA var(--d, 7s) ease-in-out infinite; }
+    .tile3d.tB, .bubble3d.tB { animation: float3dB var(--d, 8s) ease-in-out infinite; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile3d { transform: perspective(1100px) rotateX(8deg) rotateY(-8deg); }
+    .bubble3d { transform: perspective(1100px) rotateX(-7deg) rotateY(9deg); }
+  }
+  .tile3d.ico { opacity: var(--o, 0.78); }
+  .tile3d.ico span { font-size: calc(var(--s, 76px) * 0.5); filter: saturate(1.05); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* hide tweak panel mount when not active */
+  #tweaks-root:empty { display: none; }
+</style>
+</head>
+<body style="background-color: var(--bg); font-family: &quot;Hanken Grotesk&quot;">
+  <div id="root"></div>
+  <div id="tweaks-root"></div>
+
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="22" fill="#0e0e0f"/>
+      <text x="50" y="50" font-family="Helvetica, Arial, sans-serif" font-size="40" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="central" letter-spacing="-2">R</text>
+      <path d="M50 70 l4.6 9.3 10.3 1.5 -7.4 7.3 1.7 10.2 -9.2 -4.8 -9.2 4.8 1.7 -10.2 -7.4 -7.3 10.3 -1.5z" fill="#3bbf86" transform="scale(0.42) translate(69 96)"/>
+    </svg>
+  </template>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="mockups.jsx"></script>
+  <script type="text/babel" src="sections.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
